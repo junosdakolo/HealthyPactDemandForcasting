@@ -1,13 +1,13 @@
 from flask import Flask, request, jsonify
 import pandas as pd
 import joblib
-import os
 from prophet import Prophet
+import os
 
 app = Flask(__name__)
 
-# Load the trained Prophet model
-model = joblib.load('model.pkl')
+# Load the trained model
+model = joblib.load("model.pkl")
 
 @app.route('/')
 def home():
@@ -16,14 +16,15 @@ def home():
 @app.route('/forecast', methods=['POST'])
 def forecast():
     try:
-        input_data = request.get_json()
-        # Use environment variable or default value
-        periods = int(input_data.get("periods", os.getenv("DEFAULT_PERIODS", 6)))
+        data = request.get_json()
 
-        # Prepare future dataframe
+        # Get number of future periods from input or use default
+        periods = int(data.get("periods", 6))
+
+        # Create future dataframe
         future = model.make_future_dataframe(periods=periods, freq='M')
 
-        # Use average of last 6 rows for each regressor
+        # Use average of most recent months for regressor values
         recent = model.history[['CPI', 'Campaigns', 'Holidays']].tail(6).mean()
         future['CPI'] = recent['CPI']
         future['Campaigns'] = recent['Campaigns']
@@ -31,15 +32,17 @@ def forecast():
 
         # Generate forecast
         forecast = model.predict(future)
+
         result = forecast[['ds', 'yhat', 'yhat_lower', 'yhat_upper']].tail(periods).to_dict(orient='records')
 
         return jsonify({
             "forecast": result,
-            "message": f"Forecast generated for next {periods} months"
+            "message": f"✅ Forecast generated for next {periods} months"
         })
+    
     except Exception as e:
-        return jsonify({"error": str(e)})
+        return jsonify({"error": str(e)}), 500
 
-# Only used when testing locally
+# Only run locally
 if __name__ == '__main__':
     app.run(debug=True)

@@ -2,3 +2,5 @@ flask
 prophet
 joblib
 pandas
+gunicorn
+

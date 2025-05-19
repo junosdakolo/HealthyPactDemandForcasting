@@ -1,0 +1,7 @@
+GitHub Repo
+
+https://github.com/junosdakolo/HealthyPactDemandForcasting
+
+Deployment on render
+
+https://healthypactdemandforcasting-1.onrender.com

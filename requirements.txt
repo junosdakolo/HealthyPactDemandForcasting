@@ -1,0 +1,4 @@
+flask
+prophet
+joblib
+pandas

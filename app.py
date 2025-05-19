@@ -11,7 +11,7 @@ model = joblib.load("model.pkl")
 
 @app.route('/')
 def home():
-    return "✅ HealthyPact Demand Forecasting API is live!"
+    return "HealthyPact Demand Forecasting API is live!"
 
 @app.route('/forecast', methods=['POST'])
 def forecast():
@@ -37,7 +37,7 @@ def forecast():
 
         return jsonify({
             "forecast": result,
-            "message": f"✅ Forecast generated for next {periods} months"
+            "message": f"Forecast generated for next {periods} months"
         })
     
     except Exception as e:
